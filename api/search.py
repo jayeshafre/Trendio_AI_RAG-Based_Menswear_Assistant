@@ -1,7 +1,7 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 from pydantic import BaseModel
 from services.embedder import generate_embedding
-from services.vector_store import search
+from services.vector_store import search_from_state
 
 router = APIRouter(prefix="/search", tags=["Search"])
 
@@ -12,12 +12,16 @@ class SearchRequest(BaseModel):
 
 
 @router.post("/")
-def semantic_search(request: SearchRequest):
-    query_vector = generate_embedding(request.query)
-    results = search(query_vector, top_k=request.top_k)
-
+def semantic_search(request: Request, body: SearchRequest):
+    query_vector = generate_embedding(body.query)
+    results = search_from_state(
+        request.app.state.index,
+        request.app.state.products,
+        query_vector,
+        top_k=body.top_k
+    )
     return {
-        "query": request.query,
+        "query": body.query,
         "total": len(results),
         "results": results
     }

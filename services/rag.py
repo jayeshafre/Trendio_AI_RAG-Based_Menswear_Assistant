@@ -1,16 +1,12 @@
 from groq import Groq
 from services.embedder import generate_embedding
-from services.vector_store import search
+from services.vector_store import search_from_state
 from config import GROQ_API_KEY, LLM_MODEL
 
 client = Groq(api_key=GROQ_API_KEY)
 
 
 def format_products_for_context(products: list[dict]) -> str:
-    """
-    Converts retrieved products into a readable text block
-    that gets passed to the LLM as context.
-    """
     lines = []
     for i, p in enumerate(products, 1):
         price = p.get('sale_price') or p.get('base_price')
@@ -25,21 +21,16 @@ def format_products_for_context(products: list[dict]) -> str:
     return "\n".join(lines)
 
 
-def ask(user_query: str, top_k: int = 5) -> dict:
+def ask(user_query: str, index, products: list[dict], top_k: int = 5) -> dict:
     """
-    Full RAG pipeline:
-    1. Convert query to embedding
-    2. Retrieve similar products from FAISS
-    3. Format products as context
-    4. Send query + context to Groq LLM
-    5. Return response + products used
+    Full RAG pipeline using pre-loaded index from app.state.
+    No disk reads during request handling.
     """
-
     # Step 1 — Embed the query
     query_vector = generate_embedding(user_query)
 
-    # Step 2 — Retrieve relevant products
-    retrieved_products = search(query_vector, top_k=top_k)
+    # Step 2 — Retrieve from memory
+    retrieved_products = search_from_state(index, products, query_vector, top_k)
 
     # Step 3 — Format as context
     context = format_products_for_context(retrieved_products)

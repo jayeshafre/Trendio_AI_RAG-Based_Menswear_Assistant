@@ -73,3 +73,20 @@ def search(query_vector: list[float], top_k: int = 5) -> list[dict]:
             results.append(product)
 
     return results
+
+def search_from_state(index, products: list[dict], query_vector: list[float], top_k: int = 5) -> list[dict]:
+    """
+    Same as search() but uses pre-loaded index from app.state
+    instead of reading from disk on every request.
+    """
+    query = np.array([query_vector], dtype="float32")
+    D, I = index.search(query, top_k)
+
+    results = []
+    for i, idx in enumerate(I[0]):
+        if idx != -1:
+            product = products[idx].copy()
+            product['relevance_score'] = float(D[0][i])
+            results.append(product)
+
+    return results
