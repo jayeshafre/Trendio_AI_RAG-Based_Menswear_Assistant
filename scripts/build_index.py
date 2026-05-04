@@ -7,10 +7,14 @@ Usage:
 """
 import sys
 import os
+import json
+import numpy as np
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from services.embedder import get_products_from_db, build_product_text, generate_embedding
 from services.vector_store import save_index
+from config import FAISS_INDEX_PATH
 
 
 def main():
@@ -35,6 +39,12 @@ def main():
 
     print("Step 3: Building and saving FAISS index...")
     save_index(embeddings, products)
+
+    # Save embeddings separately for recommendations
+    os.makedirs(FAISS_INDEX_PATH, exist_ok=True)
+    embeddings_array = np.array(embeddings, dtype="float32")
+    np.save(f"{FAISS_INDEX_PATH}/embeddings.npy", embeddings_array)
+    print("Embeddings saved separately for recommendations.")
 
     print("\nDone. FAISS index is ready.")
 
