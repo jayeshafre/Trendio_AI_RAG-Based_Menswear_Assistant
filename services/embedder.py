@@ -40,6 +40,7 @@ def get_products_from_db() -> list[dict]:
             p.title,
             p.description,
             p.brand,
+            p.slug,
             p.base_price,
             p.sale_price,
             cp.full_path as category_name,
@@ -53,7 +54,7 @@ def get_products_from_db() -> list[dict]:
         LEFT JOIN product_images pi 
                ON pi.product_id = p.id AND pi.is_primary = true
         WHERE p.is_active = true
-        GROUP BY p.id, p.title, p.description, p.brand,
+        GROUP BY p.id, p.title, p.description, p.brand,p.slug,
                  p.base_price, p.sale_price, cp.full_path
         ORDER BY p.created_at DESC
     """)
