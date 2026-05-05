@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from api.search import router as search_router
 from api.chat import router as chat_router
 from api.recommendations import router as recommendations_router
+from api.outfit import router as outfit_router
 from services.vector_store import load_index
 
 load_dotenv()
@@ -33,6 +34,7 @@ app = FastAPI(
 app.include_router(search_router)
 app.include_router(chat_router)
 app.include_router(recommendations_router)
+app.include_router(outfit_router)
 
 
 @app.get("/")
