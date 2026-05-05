@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+AI_SECRET_KEY = os.getenv("AI_SECRET_KEY")
+
 # Groq — for LLM responses
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 

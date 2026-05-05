@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, Request, HTTPException, Depends
 from services.vector_store import get_similar_products
+from api.dependencies import verify_api_key
 
-router = APIRouter(prefix="/recommendations", tags=["Recommendations"])
+router = APIRouter(prefix="/recommendations", tags=["Recommendations"], dependencies=[Depends(verify_api_key)])
 
 
 @router.get("/{product_id}")

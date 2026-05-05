@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, Request, HTTPException, Depends
 from pydantic import BaseModel
 from services.outfit import generate_outfit
+from api.dependencies import verify_api_key
 
-router = APIRouter(prefix="/outfit", tags=["Outfit Generator"])
+router = APIRouter(prefix="/outfit", tags=["Outfit Generator"], dependencies=[Depends(verify_api_key)])
 
 
 class OutfitRequest(BaseModel):

@@ -6,6 +6,7 @@ from api.chat import router as chat_router
 from api.recommendations import router as recommendations_router
 from api.outfit import router as outfit_router
 from services.vector_store import load_index
+from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 
@@ -31,6 +32,13 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.include_router(search_router)
 app.include_router(chat_router)
 app.include_router(recommendations_router)

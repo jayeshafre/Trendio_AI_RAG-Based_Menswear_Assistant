@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Depends
 from pydantic import BaseModel
 from services.embedder import generate_embedding
 from services.vector_store import search_from_state
+from api.dependencies import verify_api_key
 
-router = APIRouter(prefix="/search", tags=["Search"])
+router = APIRouter(prefix="/search", tags=["Search"], dependencies=[Depends(verify_api_key)])
 
 
 class SearchRequest(BaseModel):
