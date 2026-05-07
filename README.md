@@ -1,1 +1,0 @@
-# trendio-ai
